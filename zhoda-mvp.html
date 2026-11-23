@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="sk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zhoda – MVP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='23' font-size='20' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3EZ%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#f6f7fc;--card:#fff;--ink:#1a1c3d;--mute:#6b6f93;--line:#e4e6f4;--pri:#4f46e5;--prit:#fff;--soft:#ecebff;--ok:#12805c;--bad:#c0432d;--amb:#f6c453;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12132b;--card:#1c1e3f;--ink:#eceeff;--mute:#9a9ec6;--line:#31345f;--pri:#7c78ff;--prit:#0f1030;--soft:#2a2c5a;--ok:#4cd1a1;--bad:#ff8f78}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.25rem;margin:.3em 0}h3{font-size:1rem;margin:.3em 0}p{margin:.4em 0}.mute{color:var(--mute);font-size:.9rem}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;cursor:pointer}
+.lg{width:34px;height:34px;border-radius:10px;background:var(--pri);color:var(--prit);display:grid;place-items:center;font-weight:800}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.nb{background:var(--soft);color:var(--pri);border:0;border-radius:12px;padding:8px 14px;font-weight:700}.nb.on{background:var(--pri);color:var(--prit)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.06em;color:var(--pri);margin:18px 0 0;text-transform:uppercase}
+label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 5px}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit}
+button{font:inherit;cursor:pointer;border-radius:12px;padding:10px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:700}
+button.p{background:var(--pri);border-color:var(--pri);color:var(--prit)}button.sm{padding:6px 12px;font-size:.85rem}button.on{background:var(--pri);border-color:var(--pri);color:var(--prit)}
+button:disabled{opacity:.6;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,.chat:focus-visible,.brand:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.row{display:flex;gap:10px}.row>*{flex:1}
+.hero{background:linear-gradient(135deg,#2b2670,#4f46e5 60%,#7a73f5);color:#fff;border-radius:24px;padding:28px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;overflow:hidden}
+.hero h1{font-size:2.1rem;line-height:1.1;margin:10px 0}.hero p{opacity:.9;max-width:420px}.hero .pill{display:inline-block;font-size:.7rem;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:3px 10px}
+.hero .emo{font-size:5rem;flex:0 0 auto}.hero .btns{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.hero button{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff}.hero button.w{background:var(--pri);border-color:var(--pri);color:#fff}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.grid3 .card{margin:0}.num{font-size:1.6rem;font-weight:800}
+@media(max-width:560px){.grid3{grid-template-columns:1fr}.hero .emo{display:none}.hero h1{font-size:1.8rem}}
+.av{width:46px;height:46px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-weight:800;font-size:.95rem;color:#fff;background:linear-gradient(135deg,#4f46e5,#8b83ff)}
+.av.sq{border-radius:12px;background:var(--amb);color:#3a2d00;width:42px;height:42px}
+.top{display:flex;align-items:center;gap:12px}.top .grow{flex:1;min-width:0}.pct{font-size:1.4rem;font-weight:800;color:var(--ok)}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:var(--ok)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.tag{font-size:.88rem;margin:2px 0}
+.contact{background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:10px;font-weight:600;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.chat{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px 14px;margin:10px 0;cursor:pointer;box-shadow:0 2px 10px rgba(40,40,100,.06)}
+.chat:hover{border-color:var(--pri)}.chat .ct{flex:1;min-width:0;display:flex;flex-direction:column}.chat b{font-size:1rem}
+.chat .last{font-size:.85rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chev{color:var(--mute);font-size:1.6rem}
+.chead{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px 14px;margin:10px 0}
+.msgs{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px;min-height:200px}
+.m{display:flex;margin:6px 0}.m span{max-width:80%;padding:9px 13px;border-radius:18px}
+.m.me{justify-content:flex-end}.m.me span{background:var(--pri);color:var(--prit);border-bottom-right-radius:6px}.m.th span{background:var(--soft);border-bottom-left-radius:6px}
+.steps .card{margin:0}.steps .ic{font-size:1.4rem}
+details{margin-top:24px}summary{cursor:pointer;color:var(--mute);font-size:.9rem}
+</style></head><body><main>
+<header><div class="brand" id="logo" tabindex="0"><span class="lg">Z</span>zhoda</div><div class="tabs" id="tabs"></div></header>
+<div id="app"></div>
+<details><summary>Metriky testu (pre vyhodnotenie MVP)</summary><div class="card mute" id="stats"></div></details>
+</main>
+<script>
+const SK=['Python','Figma','React','Dáta','Marketing','SQL'],TY=['Letná','Popri škole','Bakalárka s firmou'],FO=['Na mieste','Hybrid','Remote'];
+const SEED_O=[
+{id:'o1',firm:'Nordlabs',title:'Junior UX/Data analytik',skills:['Python','Figma','Dáta'],type:'Letná',form:'Hybrid',h:[10,20],p:[7,9],dur:'3 mesiace',study:'Áno, rozvrh sa prispôsobí',email:'praca@nordlabs.example'},
+{id:'o2',firm:'Kosit Soft',title:'Frontend stážista',skills:['Figma','React'],type:'Popri škole',form:'Remote',h:[8,15],p:[6,8],dur:'6 mesiacov',study:'Áno, flexibilné hodiny',email:'hr@kositsoft.example'},
+{id:'o3',firm:'BioData',title:'Dáta pre bakalárku',skills:['Python','SQL','Dáta'],type:'Bakalárka s firmou',form:'Na mieste',h:[10,15],p:[5,6],dur:'8 mesiacov',study:'Prepojené s bakalárskou prácou',email:'spolupraca@biodata.example'},
+{id:'o4',firm:'Tatra Retail',title:'Marketing asistent',skills:['Marketing','Dáta'],type:'Letná',form:'Na mieste',h:[20,40],p:[6,7],dur:'2 mesiace',study:'Nie, len cez leto',email:'jobs@tatraretail.example'},
+{id:'o5',firm:'SteelDev',title:'Junior Python vývojár',skills:['Python','SQL'],type:'Popri škole',form:'Hybrid',h:[12,20],p:[8,10],dur:'12 mesiacov',study:'Áno, 2 dni v týždni',email:'kariera@steeldev.example'},
+{id:'o6',firm:'CloudKE',title:'SQL/Dáta analytik',skills:['SQL','Dáta','Python'],type:'Letná',form:'Remote',h:[15,25],p:[7,9],dur:'3 mesiace',study:'Nie, len cez leto',email:'praca@cloudke.example'}];
+const SEED_S=[
+{id:'s1',name:'Peter M.',major:'Aplikovaná informatika',skills:['Python','SQL','Dáta'],types:['Letná','Popri škole'],forms:['Hybrid','Remote'],hours:15,pay:6,email:'peter@student.example'},
+{id:'s2',name:'Lucia H.',major:'Hospodárska informatika',skills:['Figma','React'],types:['Popri škole'],forms:['Remote'],hours:10,pay:5,email:'lucia@student.example'},
+{id:'s3',name:'Marek S.',major:'Ekonomika a manažment',skills:['Marketing','Dáta'],types:['Letná'],forms:['Na mieste','Hybrid'],hours:25,pay:6,email:'marek@student.example'}];
+const fresh=()=>({me:null,myO:[],I:{},C:{},st:{t0:null,tProfile:null,views:0,likes:0,mutual:0,msgs:0}});
+let D=fresh(),role=null,sel=null,draft=null,fdraft=null,cv=null;
+try{const x=localStorage.getItem('zhoda');if(x)D=JSON.parse(x)}catch(e){}
+D.C=D.C||{};D.st.msgs=D.st.msgs||0;
+const save=()=>{try{localStorage.setItem('zhoda',JSON.stringify(D))}catch(e){}};
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ini=n=>{const w=String(n).trim().split(/\s+/).filter(Boolean);return(w.length>1?w[0][0]+w[1][0]:String(n).trim().slice(0,2)).toUpperCase()};
+const offers=()=>SEED_O.concat(D.myO),studs=()=>SEED_S.concat(D.me?[D.me]:[]);
+function match(s,o){const hit=o.skills.filter(x=>s.skills.includes(x)),miss=o.skills.filter(x=>!s.skills.includes(x)),ok=[],bad=[];
+ let sc=50*(o.skills.length?hit.length/o.skills.length:1);
+ hit.length&&ok.push('zručnosti: '+hit.join(', '));miss.length&&bad.push('chýba '+miss.join(', '));
+ if(s.types.includes(o.type)){sc+=15;ok.push('typ praxe: '+o.type)}else bad.push('typ praxe: '+o.type);
+ if(s.forms.includes(o.form)){sc+=15;ok.push('forma: '+o.form)}else bad.push('forma: '+o.form);
+ const d=s.hours<o.h[0]?o.h[0]-s.hours:s.hours>o.h[1]?s.hours-o.h[1]:0;sc+=10*Math.max(0,1-d/10);
+ d?bad.push('hodiny: '+o.h[0]+'–'+o.h[1]+' h/týždeň'):ok.push('hodiny sedia');
+ if(o.p[1]>=s.pay){sc+=10;ok.push('odmena '+o.p[0]+'–'+o.p[1]+' €/h')}else bad.push('odmena pod tvojím minimom');
+ return{p:Math.round(sc),ok,bad}}
+const key=(s,o)=>s+'|'+o;
+function say(k,from,t){(D.C[k]=D.C[k]||[]).push({from,t})}
+function like(sid,oid,side){const k=key(sid,oid),v=D.I[k]=D.I[k]||{s:0,f:0};if(v[side])return;v[side]=1;D.st.likes++;
+ const o=offers().find(x=>x.id==oid);
+ if(side=='s'&&!v.f&&oid[0]=='o'&&D.me&&match(D.me,o).p>=60){v.f=1;say(k,'f','Ahoj, videli sme tvoj profil. Kedy by ti vyhovoval krátky hovor?')}
+ if(v.s&&v.f){D.st.mutual++;if(!D.C[k])say(k,'f','Ahoj, tešíme sa na spoluprácu. Dohodnime ďalší postup.')}
+ save();render()}
+const chips=(list,s,fn)=>list.map(x=>`<button type="button" class="sm ${s.includes(x)?'on':''}" data-c="${fn}" data-v="${esc(x)}" aria-pressed="${s.includes(x)}">${esc(x)}</button>`).join('');
+function threads(){const me=role=='student';return Object.keys(D.I).filter(k=>{const v=D.I[k];if(!(v.s&&v.f))return false;const[s,o]=k.split('|');return me?s=='me':!!D.myO.find(x=>x.id==o)}).map(k=>{const[s,o]=k.split('|');return{k,of:offers().find(x=>x.id==o),st:studs().find(x=>x.id==s)}}).filter(x=>x.of&&x.st)}
+function render(){
+ const showChats=(role=='student'&&D.me&&!draft)||(role=='firm'&&D.myO.length)||cv;
+ $('#tabs').innerHTML=(role?`<button class="nb" data-act="home">← Domov</button>`:'')+(showChats?`<button class="nb ${cv?'on':''}" data-act="chats">Chaty (${threads().length})</button>`:'');
+ const a=$('#app');
+ if(!role)a.innerHTML=home();
+ else if(cv)a.innerHTML=chatView();
+ else if(role=='student')a.innerHTML=D.me&&!draft?studentMatches():studentForm();
+ else a.innerHTML=firmView();
+ $('#stats').innerHTML=`Čas vyplnenia profilu: <b>${D.st.tProfile?D.st.tProfile+' s':'–'}</b><br>Zobrazenia zhôd: <b>${D.st.views}</b> · Prejavené záujmy: <b>${D.st.likes}</b> · Vzájomné zhody: <b>${D.st.mutual}</b> · Správy: <b>${D.st.msgs}</b><br><button class="sm" data-reset="1" style="margin-top:8px">Vymazať dáta testu</button>`}
+function home(){return`<section class="hero"><div><span class="pill">Platforma pre študentov a firmy</span><h1>Nájdi prax,<br>ktorá ti sedí.</h1><p>Zhoda prepája študentov s firmami podľa zručností, časových možností a očakávaní. Menej náhodného hľadania, viac relevantných príležitostí.</p><div class="btns"><button class="w" data-role="student">Som študent →</button><button data-role="firm">Som firma</button></div></div><div class="emo" aria-hidden="true">🤝</div></section>
+ <p class="eyebrow">Zhoda v číslach</p><h2>Malý krok k prvej praxi</h2>
+ <div class="grid3"><div class="card"><div class="num">${D.me?1:0}</div><div class="mute">Vytvorený študentský profil</div></div><div class="card"><div class="num">${offers().length}</div><div class="mute">Dostupné ponuky praxe</div></div><div class="card"><div class="num">${D.st.mutual}</div><div class="mute">Vzájomné záujmy</div></div></div>
+ <p class="eyebrow">Ako to funguje</p><h2>Tri jednoduché kroky</h2>
+ <div class="grid3 steps"><div class="card"><div class="ic">🎓</div><h3>1. Vytvor profil</h3><p class="mute">Študent uvedie zručnosti, preferovaný typ praxe a časové možnosti.</p></div><div class="card"><div class="ic">🏢</div><h3>2. Firma pridá ponuku</h3><p class="mute">Firma opíše pozíciu, požadované zručnosti, odmenu a formu práce.</p></div><div class="card"><div class="ic">✨</div><h3>3. Nájdite zhodu</h3><p class="mute">Zhoda vypočíta skóre a vysvetlí, čo sa zhoduje. Po vzájomnom záujme sa otvorí chat.</p></div></div>
+ <div class="card" style="margin-top:16px"><p class="eyebrow" style="margin-top:0">Začni teraz</p><h2>Vyskúšaj Zhoda ako študent alebo firma</h2><p class="mute">Toto je funkčný demonštračný prototyp. Údaje sa ukladajú v tomto prehliadači.</p><div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="p" data-role="student">Vytvoriť študentský profil</button><button data-role="firm">Pridať ponuku</button></div></div>`}
+function studentForm(){const d=draft=draft||D.me&&JSON.parse(JSON.stringify(D.me))||{name:'',major:'',skills:[],types:[],forms:[],hours:15,pay:6,email:''};
+ if(!D.st.t0)D.st.t0=Date.now();
+ return`<h2>Tvoj profil</h2><p class="mute">Pár minút a máme z čoho párovať.</p><div class="card">
+ <label for="n">Meno</label><input id="n" data-f="name" value="${esc(d.name)}">
+ <label for="m">Odbor</label><input id="m" data-f="major" value="${esc(d.major)}">
+ <label for="e">Kontaktný e-mail (zobrazí sa až po vzájomnom záujme)</label><input id="e" type="email" data-f="email" value="${esc(d.email)}">
+ <label>Čo vieš</label><div class="chips">${chips(SK,d.skills,'skills')}</div>
+ <label>Typ praxe</label><div class="chips">${chips(TY,d.types,'types')}</div>
+ <label>Forma</label><div class="chips">${chips(FO,d.forms,'forms')}</div>
+ <label for="h">Hodiny týždenne: <b id="hv">${d.hours}</b></label><input id="h" type="range" min="5" max="40" value="${d.hours}" data-f="hours">
+ <label for="p">Minimálna odmena (€/hod)</label><input id="p" type="number" min="0" value="${d.pay}" data-f="pay">
+ <p class="bad" id="err"></p><button class="p" data-act="save" style="width:100%;margin-top:8px">Nájsť zhody</button></div>`}
+function resultBlock(m){return`<div class="bar"><i style="width:${m.p}%"></i></div>${m.ok.map(x=>`<div class="tag ok">✓ ${esc(x)}</div>`).join('')}${m.bad.map(x=>`<div class="tag bad">✗ ${esc(x)}</div>`).join('')}`}
+function studentMatches(){const s=D.me;D.st.views++;save();
+ const L=offers().map(o=>({o,m:match(s,o)})).sort((a,b)=>b.m.p-a.m.p);
+ return`<h2>Tvoje zhody, ${esc(s.name)}</h2><p class="mute">Zoradené podľa toho, ako sedia tvoje požiadavky.</p>`+L.map(({o,m})=>{const v=D.I[key(s.id,o.id)]||{};
+ return`<div class="card"><div class="top"><span class="av sq">${esc(ini(o.firm))}</span><div class="grow"><b>${esc(o.title)}</b><div class="mute">${esc(o.firm)} · ${o.form} · ${o.p[0]}–${o.p[1]} €/h</div></div><div class="pct">${m.p} %</div></div>
+ ${resultBlock(m)}<div class="mute" style="margin-top:6px">Dĺžka: ${esc(o.dur)} · Popri škole: ${esc(o.study)}</div>
+ <div style="margin-top:10px">${v.s?'<button class="sm" disabled>Záujem odoslaný ✓</button>':`<button class="p sm" data-like="${o.id}">Mám záujem</button>`}</div>
+ ${v.s&&v.f?`<div class="contact"><span>Vzájomný záujem! ${esc(o.email)}</span><button class="sm p" data-th="${key(s.id,o.id)}">Otvoriť chat</button></div>`:v.s?'<p class="mute">Čakáme, kým firma prejaví záujem aj o teba.</p>':''}</div>`}).join('')+`<button data-act="edit">Upraviť profil</button>`}
+function firmView(){const f=fdraft=fdraft||{firm:'',title:'',skills:[],type:'Letná',form:'Hybrid',h0:10,h1:20,p0:7,p1:9,dur:'3 mesiace',study:'Áno',email:''};
+ let h=`<h2>Ponuka praxe</h2><p class="mute">Napíš, koho hľadáš. Nájdeme tých, čo tam pasujú.</p><div class="card">
+ <label for="fn">Firma</label><input id="fn" data-g="firm" value="${esc(f.firm)}">
+ <label for="ft">Pozícia</label><input id="ft" data-g="title" value="${esc(f.title)}">
+ <label for="fe">Kontaktný e-mail</label><input id="fe" type="email" data-g="email" value="${esc(f.email)}">
+ <label>Požadované zručnosti</label><div class="chips">${chips(SK,f.skills,'fskills')}</div>
+ <label for="fy">Typ praxe</label><select id="fy" data-g="type">${TY.map(x=>`<option ${x==f.type?'selected':''}>${x}</option>`).join('')}</select>
+ <label for="ff">Forma</label><select id="ff" data-g="form">${FO.map(x=>`<option ${x==f.form?'selected':''}>${x}</option>`).join('')}</select>
+ <div class="row"><div><label for="h0">Hodiny od</label><input id="h0" type="number" data-g="h0" value="${f.h0}"></div><div><label for="h1">do</label><input id="h1" type="number" data-g="h1" value="${f.h1}"></div></div>
+ <div class="row"><div><label for="p0">Odmena od (€/h)</label><input id="p0" type="number" data-g="p0" value="${f.p0}"></div><div><label for="p1">do</label><input id="p1" type="number" data-g="p1" value="${f.p1}"></div></div>
+ <div class="row"><div><label for="du">Dĺžka praxe</label><input id="du" data-g="dur" value="${esc(f.dur)}"></div><div><label for="st">Popri škole?</label><input id="st" data-g="study" value="${esc(f.study)}"></div></div>
+ <p class="bad" id="err"></p><button class="p" data-act="publish" style="width:100%;margin-top:8px">Zverejniť a párovať</button></div>`;
+ if(D.myO.length){if(!sel||!D.myO.find(o=>o.id==sel))sel=D.myO[D.myO.length-1].id;const o=D.myO.find(x=>x.id==sel);D.st.views++;
+ h+=`<h2>Kandidáti</h2><label for="so">Ponuka</label><select id="so" data-sel="1">${D.myO.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${esc(x.title)}</option>`).join('')}</select>`;
+ h+=studs().map(s=>({s,m:match(s,o)})).sort((a,b)=>b.m.p-a.m.p).map(({s,m})=>{const v=D.I[key(s.id,o.id)]||{};
+ return`<div class="card"><div class="top"><span class="av">${esc(ini(s.name))}</span><div class="grow"><b>${esc(s.name)}</b><div class="mute">${esc(s.major)} · ${s.hours} h/týždeň · min. ${s.pay} €/h</div></div><div class="pct">${m.p} %</div></div>
+ ${resultBlock(m)}<div style="margin-top:10px">${v.f?'<button class="sm" disabled>Záujem odoslaný ✓</button>':`<button class="p sm" data-flike="${s.id}">Mám záujem</button>`}</div>
+ ${v.s&&v.f?`<div class="contact"><span>Vzájomný záujem! ${esc(s.email)}</span><button class="sm p" data-th="${key(s.id,o.id)}">Otvoriť chat</button></div>`:v.f?'<p class="mute">Čakáme na reakciu študenta.</p>':v.s?'<p class="mute"><b>Študent už prejavil záujem o túto ponuku.</b></p>':''}</div>`}).join('')}
+ return h}
+function chatView(){
+ if(cv=='list'){const T=threads();return`<h2>Chaty</h2>`+(T.length?T.map(x=>{const nm=role=='student'?x.of.firm:x.st.name,M=D.C[x.k]||[],last=M.length?M[M.length-1].t:'Začnite konverzáciu';
+  return`<div class="chat" role="button" tabindex="0" data-th="${x.k}"><span class="av">${esc(ini(nm))}</span><span class="ct"><b>${esc(nm)}</b><span class="mute">${esc(x.of.title)}</span><span class="last">${esc(last)}</span></span><span class="chev" aria-hidden="true">›</span></div>`}).join(''):`<div class="card mute">Zatiaľ žiadne chaty. Chat sa otvorí, keď obe strany prejavia záujem.</div>`)}
+ const T=threads().find(x=>x.k==cv);if(!T){cv='list';return chatView()}
+ const me=role[0],M=D.C[cv]||[],nm=role=='student'?T.of.firm:T.st.name;
+ return`<div class="chead"><button class="sm" data-act="chats" aria-label="Späť na chaty">←</button><span class="av">${esc(ini(nm))}</span><div><b>${esc(nm)}</b><div class="mute">${esc(T.of.title)}</div></div></div>
+ <p class="mute">Kontakt: ${esc(role=='student'?T.of.email:T.st.email)}</p>
+ <div class="msgs">${M.map(m=>`<div class="m ${m.from==me?'me':'th'}"><span>${esc(m.t)}</span></div>`).join('')||'<p class="mute">Napíš prvú správu.</p>'}</div>
+ <div class="row" style="margin-top:10px"><input id="msg" placeholder="Napíš správu" aria-label="Správa"><button class="p" style="flex:0 0 auto" data-act="send">Poslať</button></div>`}
+function send(){const i=$('#msg'),t=i.value.trim();if(!t)return;say(cv,role[0],t);D.st.msgs++;
+ const mine=D.C[cv].filter(m=>m.from==role[0]).length;
+ if(role=='student'&&cv.split('|')[1][0]=='o'&&mine==1)say(cv,'f','Super, pošleme ti pozvánku do kalendára.');
+ save();render();$('#msg')&&$('#msg').focus()}
+document.addEventListener('keydown',e=>{if(e.key!='Enter')return;if(e.target.id=='msg')send();else if(e.target.dataset&&e.target.dataset.th){cv=e.target.dataset.th;render()}else if(e.target.id=='logo'){role=null;cv=null;render()}});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.f&&draft){draft[t.dataset.f]=t.type=='range'||t.type=='number'?+t.value:t.value;if(t.type=='range')$('#hv').textContent=t.value}
+ if(t.dataset.g&&fdraft){fdraft[t.dataset.g]=t.type=='number'?+t.value:t.value}});
+document.addEventListener('change',e=>{if(e.target.dataset.sel){sel=e.target.value;render()}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-role],[data-c],[data-act],[data-like],[data-flike],[data-reset],[data-th],#logo');if(!t)return;
+ if(t.id=='logo'||t.dataset.act=='home'){role=null;cv=null;return render()}
+ if(t.dataset.act=='chats'){cv='list';return render()}
+ if(t.dataset.th){cv=t.dataset.th;return render()}
+ if(t.dataset.act=='send')return send();
+ if(t.dataset.role){role=t.dataset.role;cv=null;return render()}
+ if(t.dataset.c){const o=t.dataset.c=='fskills'?fdraft:draft,m=t.dataset.c=='fskills'?'skills':t.dataset.c,a=o[m],i=a.indexOf(t.dataset.v);i<0?a.push(t.dataset.v):a.splice(i,1);return render()}
+ if(t.dataset.like)like(D.me.id,t.dataset.like,'s');
+ if(t.dataset.flike)like(t.dataset.flike,sel,'f');
+ if(t.dataset.reset){try{localStorage.removeItem('zhoda')}catch(x){}D=fresh();draft=fdraft=sel=cv=null;role=null;render()}
+ if(t.dataset.act=='edit'){draft=JSON.parse(JSON.stringify(D.me));render()}
+ if(t.dataset.act=='save'){const d=draft;if(!d.name.trim()||!d.skills.length||!d.types.length||!d.forms.length||!d.email.includes('@'))return $('#err').textContent='Vyplň meno, e-mail a vyber aspoň jednu zručnosť, typ praxe a formu.';
+  d.id='me';if(!D.me)D.st.tProfile=Math.round((Date.now()-D.st.t0)/1000);D.me=d;draft=null;save();render()}
+ if(t.dataset.act=='publish'){const f=fdraft;if(!f.firm.trim()||!f.title.trim()||!f.skills.length||!f.email.includes('@'))return $('#err').textContent='Vyplň firmu, pozíciu, e-mail a vyber aspoň jednu zručnosť.';
+  const o={id:'m'+Date.now(),firm:f.firm,title:f.title,skills:f.skills,type:f.type,form:f.form,h:[f.h0,f.h1],p:[f.p0,f.p1],dur:f.dur,study:f.study,email:f.email};
+  D.myO.push(o);sel=o.id;fdraft=null;save();render()}});
+render();
+</script></body></html>
